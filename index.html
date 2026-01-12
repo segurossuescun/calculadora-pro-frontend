@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Calculadora Pro</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- HEADER -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">🧮</div>
+        <div>
+          <h1>Calculadora Pro</h1>
+          <p class="sub">Pago único • Prueba 3 días • Colores personalizables 💜</p>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <!-- 🎨 Tentación: siempre visible 😈 -->
+        <div class="accent-wrap" style="display:flex;align-items:center;gap:10px;">
+            <span id="accentLock" style="font-size:12px;opacity:.8;">🔒</span>
+            <input id="accentPicker" type="color" value="#8b68b0" aria-label="Color de acento" />
+        </div>
+
+        <button id="btnTheme" class="btn ghost" type="button" aria-label="Cambiar tema">🌙</button>
+     </div>
+    </header>
+
+    <!-- CHIPS NAV -->
+    <nav class="chips" aria-label="Navegación">
+        <button class="chip active" type="button" data-view="calc">🧮 Calculadora</button>
+        <button class="chip" type="button" data-view="conv">💱 Conversiones</button>
+        <button class="chip" type="button" data-view="income">💰 Ingresos</button>
+
+        <div class="pro-pill" id="proPill" title="Estado de acceso">
+            <span id="proStateDot" class="dot"></span>
+            <span id="proStateText">Prueba activa</span>
+        </div>
+        </nav>
+
+    <!-- VIEWS -->
+    <main class="views">
+
+      <!-- =========================
+           VIEW: CALCULADORA (FREE)
+      ========================== -->
+      <section id="viewCalc" class="view active" data-view="calc">
+        <div class="card calc">
+          <div class="card-head">
+            <h2>Calculadora</h2>
+            <div class="mini-actions">
+              <button id="btnCopyResult" class="btn ghost" type="button">Copiar</button>
+              <button id="btnClearHistory" class="btn ghost" type="button">Borrar historial</button>
+            </div>
+          </div>
+
+          <div class="display">
+            <div id="calcExpr" class="expr"></div>
+            <div id="calcValue" class="value">0</div>
+          </div>
+
+          <div class="keypad" role="group" aria-label="Teclado de calculadora">
+            <button class="key ghost" data-act="clear">C</button>
+            <button class="key ghost" data-act="back">⌫</button>
+            <button class="key ghost" data-in="(">(</button>
+            <button class="key ghost" data-in=")">)</button>
+
+            <button class="key ghost" data-act="sqrt">√</button>
+            <button class="key ghost" data-act="square">x²</button>
+            <button class="key op" data-in="%">%</button>
+            <button class="key op" data-in="÷">÷</button>
+
+            <button class="key" data-in="7">7</button>
+            <button class="key" data-in="8">8</button>
+            <button class="key" data-in="9">9</button>
+            <button class="key op" data-in="×">×</button>
+
+            <button class="key" data-in="4">4</button>
+            <button class="key" data-in="5">5</button>
+            <button class="key" data-in="6">6</button>
+            <button class="key op" data-in="-">-</button>
+
+            <button class="key" data-in="1">1</button>
+            <button class="key" data-in="2">2</button>
+            <button class="key" data-in="3">3</button>
+            <button class="key op" data-in="+">+</button>
+
+            <button class="key wide" data-in="0">0</button>
+            <button class="key" data-in=".">.</button>
+            <button class="key eq" data-act="eq">=</button>
+          </div>
+
+          <div class="history">
+            <h3>Historial</h3>
+            <ul id="historyList" class="history-list"></ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================
+           VIEW: CONVERSIONES (PRO)
+      ========================== -->
+      <section id="viewConv" class="view" data-view="conv">
+        <!-- Bloqueo PRO (se muestra si no hay acceso) -->
+        <div class="pro-lock" id="lockConv">
+          <h2>🔒 Conversiones PRO</h2>
+          <p>Incluye Longitud, Peso y Edad. Pruébalo 3 días o desbloquea por <strong>$4</strong> 😄💜</p>
+          <button id="btnUnlockFromConv" class="btn" type="button">Desbloquear Pro — $4</button>
+        </div>
+
+        <!-- Contenido real (se muestra cuando hay acceso) -->
+        <div class="card conv" id="convContent">
+          <div class="card-head">
+            <div>
+              <h2>Conversiones</h2>
+              <p class="muted">Toca una tarjeta para abrir/cerrar. Escribe en una casilla y las otras se calculan solitas ⚡</p>
+            </div>
+            <div class="mini-actions">
+              <button class="btn ghost" type="button" id="btnConvCollapseAll">Colapsar todo</button>
+            </div>
+          </div>
+
+          <!-- 📏 LONGITUD -->
+          <details class="panel" id="panelLength" open>
+            <summary class="panel-sum">📏 Longitud</summary>
+
+            <div class="panel-body">
+              <div class="fields">
+                <label class="field">
+                    <span>Metros (m)</span>
+                    <input id="lenM" inputmode="decimal" />
+                </label>
+
+                <label class="field">
+                    <span>Centímetros (cm)</span>
+                    <input id="lenCM" inputmode="decimal" />
+                </label>
+
+                <label class="field">
+                    <span>Pies (ft)</span>
+                    <input id="lenFT" inputmode="decimal" />
+                </label>
+
+                <label class="field">
+                    <span>Pulgadas (in)</span>
+                    <input id="lenIN" inputmode="decimal" />
+                </label>
+                </div>
+
+              <div class="row-actions">
+                <button class="btn ghost" type="button" data-clear="length">Limpiar</button>
+                <button class="btn" type="button" data-capture="length">📸 Capturar</button>
+              </div>
+
+              <p class="hint">Acepta coma o punto: 1,75 = 1.75 ✅</p>
+            </div>
+          </details>
+
+          <!-- ⚖️ PESO -->
+          <details class="panel" id="panelWeight">
+            <summary class="panel-sum">⚖️ Masa</summary>
+
+            <div class="panel-body">
+              <div class="fields">
+                <label class="field">
+                <span>Kilogramos (kg)</span>
+                <input id="kg" inputmode="decimal" placeholder="0" />
+                </label>
+
+                <label class="field">
+                  <span>Gramos (g)</span>
+                  <input id="g" inputmode="decimal" placeholder="0" />
+                </label>
+
+                <label class="field">
+                  <span>Libras (lb)</span>
+                  <input id="lb" inputmode="decimal" placeholder="0" />
+                </label>
+
+                <label class="field">
+                  <span>Onzas (oz)</span>
+                  <input id="oz" inputmode="decimal" placeholder="0" />
+                </label>
+              </div>
+
+              <div class="row-actions">
+                <button class="btn ghost" type="button" data-clear="weight">Limpiar</button>
+                <button class="btn" type="button" data-capture="weight">📸 Capturar</button>
+              </div>
+
+              <p class="hint">Aquí todo pesa… y se calcula 😎⚖️</p>
+            </div>
+          </details>
+
+          <!-- 🎂 EDAD -->
+          <details class="panel" id="panelAge">
+            <summary class="panel-sum">🎂 Edad</summary>
+
+            <div class="panel-body">
+              <div class="age-grid">
+                <!-- MODO A -->
+                <div class="age-card">
+                  <h3>Fecha de nacimiento → Edad exacta</h3>
+                  <div class="fields two">
+                    <label class="field">
+                      <span>Fecha de nacimiento</span>
+                      <input id="dob" type="date" />
+                    </label>
+
+                    <label class="field">
+                      <span>Calcular al</span>
+                      <input id="asOf" type="date" />
+                    </label>
+                  </div>
+
+                  <div class="row-actions">
+                    <button class="btn ghost" type="button" id="btnAgeToday">Usar hoy</button>
+                    <button id="btnAgeClearA" class="btn ghost small">Limpiar</button>
+                    <button class="btn" type="button" id="btnAgeCaptureA">📸 Capturar</button>
+                  </div>
+
+                  <div class="result-box" aria-live="polite">
+                    <div class="result-title">Resultado</div>
+                    <div id="ageResultA" class="result-value">—</div>
+                  </div>
+                </div>
+
+                <!-- MODO B -->
+                <div class="age-card">
+                  <h3>Edad + mes nacimiento → Año que nació</h3>
+                  <div class="fields two">
+                    <label class="field">
+                      <span>Edad (años)</span>
+                      <input id="ageYears" inputmode="numeric" placeholder="0" />
+                    </label>
+
+                    <label class="field">
+                      <span>Mes de nacimiento</span>
+                      <select id="birthMonth">
+                        <option value="">Selecciona…</option>
+                        <option value="1">Enero</option>
+                        <option value="2">Febrero</option>
+                        <option value="3">Marzo</option>
+                        <option value="4">Abril</option>
+                        <option value="5">Mayo</option>
+                        <option value="6">Junio</option>
+                        <option value="7">Julio</option>
+                        <option value="8">Agosto</option>
+                        <option value="9">Septiembre</option>
+                        <option value="10">Octubre</option>
+                        <option value="11">Noviembre</option>
+                        <option value="12">Diciembre</option>
+                      </select>
+                    </label>
+                  </div>
+
+                  <div class="toggle">
+                    <span>¿Ya cumplió este año?</span>
+                    <div class="toggle-btns" role="group" aria-label="Ya cumplió este año">
+                      <button id="btnBdayYes" type="button" class="btn ghost small" data-yesno="yes">✅ Sí</button>
+                      <button id="btnBdayNo" type="button" class="btn ghost small" data-yesno="no">❌ No</button>
+                    </div>
+                  </div>
+
+                  <div class="row-actions">
+                    <button class="btn ghost" type="button" id="btnAgeClearB">Limpiar</button>
+                    <button class="btn" type="button" id="btnAgeCaptureB">📸 Capturar</button>
+                  </div>
+
+                  <div class="result-box" aria-live="polite">
+                    <div class="result-title">Resultado</div>
+                    <div id="ageResultB" class="result-value">—</div>
+                  </div>
+                </div>
+              </div>
+
+              <p class="hint">Tip: si cambias “Calcular al”, la edad se actualiza al instante 😄</p>
+            </div>
+          </details>
+
+         <!-- 🌡️ TEMPERATURA -->
+            <details class="panel" id="panelTemp">
+            <summary class="panel-sum">🌡️ Temperatura</summary>
+
+            <div class="panel-body">
+                <div class="fields">
+                <label class="field">
+                    <span>Celsius (°C)</span>
+                    <input id="tempC" inputmode="decimal" placeholder="0" />
+                </label>
+
+                <label class="field">
+                    <span>Fahrenheit (°F)</span>
+                    <input id="tempF" inputmode="decimal" placeholder="0" />
+                </label>
+
+                <label class="field">
+                    <span>Kelvin (K)</span>
+                    <input id="tempK" inputmode="decimal" placeholder="0" />
+                </label>
+                </div>
+
+                <div class="row-actions">
+                <button class="btn ghost" type="button" data-clear="temp">Limpiar</button>
+                <button class="btn" type="button" data-capture="temp">📸 Capturar</button>
+                </div>
+
+                <p class="hint">Fiebre desde 38 °C / 100.4 °F 🔥🌡️</p>
+            </div>
+            </details>
+
+            <!-- 🧃 VOLUMEN -->
+            <details class="panel" id="panelVolume">
+            <summary class="panel-sum">🧃 Volumen</summary>
+
+            <div class="panel-body">
+                <div class="fields">
+                <label class="field">
+                    <span>Litros (L)</span>
+                    <input id="volL" inputmode="decimal" placeholder="0" />
+                </label>
+
+                <label class="field">
+                    <span>Mililitros (mL)</span>
+                    <input id="volML" inputmode="decimal" placeholder="0" />
+                </label>
+
+                <label class="field">
+                    <span>Onzas líquidas (oz)</span>
+                    <input id="volOZ" inputmode="decimal" placeholder="0" />
+                </label>
+
+                <label class="field">
+                    <span>Tazas (cup)</span>
+                    <input id="volCUP" inputmode="decimal" placeholder="0" />
+                </label>
+
+                <label class="field">
+                    <span>Galones (US)</span>
+                    <input id="volGAL" inputmode="decimal" placeholder="0" />
+                </label>
+                </div>
+
+                <div class="row-actions">
+                <button class="btn ghost" type="button" data-clear="volume">Limpiar</button>
+                <button class="btn" type="button" data-capture="volume">📸 Capturar</button>
+                </div>
+
+                <p class="hint">Aquí todo se mide… y se sirve 😎🧃</p>
+            </div>
+            </details>
+
+        </div>
+      </section>
+
+      <!-- =========================
+           VIEW: INGRESOS (PRO)
+      ========================== -->
+      <section id="viewIncome" class="view" data-view="income">
+        <!-- Bloqueo PRO -->
+        <div class="pro-lock" id="lockIncome">
+          <h2>🔒 Ingresos PRO</h2>
+          <p>Registra ingresos, suma por mes y captura tu resumen 📸💜</p>
+          <button id="btnUnlockFromIncome" class="btn" type="button">Desbloquear Pro — $4</button>
+        </div>
+
+        <!-- Contenido real -->
+        <div class="card income" id="incomeContent">
+          <div class="card-head">
+            <div>
+                <h2>Ingresos</h2>
+                <p class="muted">
+                Base:
+                <input id="hrsWeek" type="number" value="40" min="1" class="mini-input" /> h/sem •
+                <input id="weeksYear" type="number" value="52" min="1" class="mini-input" /> sem/año
+                </p>
+            </div>
+            <div class="mini-actions">
+                <button class="btn ghost" type="button" id="btnIncomeClear">Limpiar</button>
+                <button class="btn" type="button" id="btnIncomeCapture">📸 Capturar</button>
+            </div>
+            </div>
+            <div class="panel-body">
+            <div class="fields two">
+                <label class="field">
+                <span>$ por hora</span>
+                <input id="rateHour" inputmode="decimal" placeholder="0" />
+                </label>
+
+                <label class="field">
+                <span>$ por semana</span>
+                <input id="rateWeek" inputmode="decimal" placeholder="0" />
+                </label>
+
+                <label class="field">
+                <span>$ por mes</span>
+                <input id="rateMonth" inputmode="decimal" placeholder="0" />
+                </label>
+
+                <label class="field">
+                <span>$ por año</span>
+                <input id="rateYear" inputmode="decimal" placeholder="0" />
+                </label>
+            </div>
+
+            <p class="hint">
+                Cálculo base:
+                <strong><span id="baseHrs">40</span></strong> horas/semana y
+                <strong><span id="baseWeeks">52</span></strong> semanas/año ✅
+            </p>
+            </div>
+
+      </section>
+
+    </main>
+
+    <footer class="footer">
+      <span>💜 Calculadora Pro</span>
+      <span class="muted">v0.2 • chips + ingresos + edad</span>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
